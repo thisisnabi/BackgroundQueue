@@ -93,8 +93,9 @@ public static class BackgroundJobQueueExtensions
        
         foreach (var processorType in processorTypes)
         {
+             
             var addHostedServiceMethod = typeof(ServiceCollectionHostedServiceExtensions)
-                                                .GetMethod("AddHostedService", BindingFlags.Static | BindingFlags.Public)
+                                                .GetMethods().FirstOrDefault(d => d.Name == "AddHostedService" && d.IsPublic && d.IsStatic)
                                                 ?.MakeGenericMethod(processorType);
 
             addHostedServiceMethod?.Invoke(null, new object[] { services });
