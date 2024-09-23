@@ -98,7 +98,7 @@ public static class BackgroundJobQueueExtensions
                                                 .GetMethods().FirstOrDefault(d => d.Name == "AddHostedService" && d.IsPublic && d.IsStatic)
                                                 ?.MakeGenericMethod(processorType);
 
-            addHostedServiceMethod?.Invoke(null, new object[] { services });
+            addHostedServiceMethod?.Invoke(null, [services]);
         }
 
         return services;
