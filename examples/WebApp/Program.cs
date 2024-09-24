@@ -1,7 +1,7 @@
 using BackgroundQueue.Core;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
-
 
 builder.Services.AddBackgroundJobQueue(builder =>
 {
@@ -50,3 +50,10 @@ public class MySecondJobConsumer(IBackgroundJobQueue jobQueue) : JobQueueProcess
     }
 }
 
+
+
+
+public class TestDbContext : DbContext
+{
+
+}

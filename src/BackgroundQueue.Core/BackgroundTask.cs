@@ -15,6 +15,13 @@ public interface IBackgroundJobQueue
     Task<T> DequeueAsync<T>(CancellationToken cancellationToken = default) where T : Job;
 }
 
+public interface IDatabaseProvider
+{
+    Task WriteAsync<T>(T Item, CancellationToken cancellationToken = default) where T : class;
+    Task<T> ReadAsync<T>(CancellationToken cancellationToken = default) where T : class;
+}
+
+
 public class BackgroundJobQueue : IBackgroundJobQueue
 {
 
@@ -64,7 +71,7 @@ public class BackgroundJobQueueBuilder
         return this;
     }
 
-    public BackgroundJobQueueBuilder FromAssembly<T>() where T : class
+    public BackgroundJobQueueBuilder ScanProcessorFromAssembly<T>() where T : class
     {
         Assembly = typeof(T).Assembly;
         return this;
@@ -83,17 +90,17 @@ public static class BackgroundJobQueueExtensions
         var builder = new BackgroundJobQueueBuilder();
         configure(builder);
 
-  
+
         var queue = builder.Build();
         services.AddSingleton<IBackgroundJobQueue>(queue);
         var processorTypes = builder.Assembly.GetTypes()
                                              .Where(t => !t.IsAbstract && !t.IsInterface)
                                              .Where(t => IsSubclassOfRawGeneric(typeof(JobQueueProcessor<>), t))
                                              .ToList();
-       
+
         foreach (var processorType in processorTypes)
         {
-             
+
             var addHostedServiceMethod = typeof(ServiceCollectionHostedServiceExtensions)
                                                 .GetMethods().FirstOrDefault(d => d.Name == "AddHostedService" && d.IsPublic && d.IsStatic)
                                                 ?.MakeGenericMethod(processorType);
@@ -120,12 +127,12 @@ public static class BackgroundJobQueueExtensions
 
 }
 
- 
+
 
 public abstract class JobQueueProcessor<TJob> : BackgroundService where TJob : Job
 {
     private readonly IBackgroundJobQueue _jobQueue;
-  
+
     public JobQueueProcessor(IBackgroundJobQueue jobQueue)
     {
         _jobQueue = jobQueue;
@@ -133,7 +140,7 @@ public abstract class JobQueueProcessor<TJob> : BackgroundService where TJob : J
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-       
+
         while (!stoppingToken.IsCancellationRequested)
         {
             try

@@ -5,12 +5,12 @@ namespace BackgroundQueue.Tests
 {
     public class BackgroundJobQueueTests
     {
-        private readonly BackgroundJobQueue<IJob> _queue;
+        private readonly BackgroundJobQueue<Job> _queue;
         private readonly int _capacity = 5;
 
         public BackgroundJobQueueTests()
         {
-            _queue = new BackgroundJobQueue<IJob>(_capacity);
+            _queue = new BackgroundJobQueue<Job>(_capacity);
         }
 
         [Fact]
