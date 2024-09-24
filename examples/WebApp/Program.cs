@@ -13,6 +13,13 @@ builder.Services.AddBackgroundJobQueue(builder =>
 var app = builder.Build();
 app.UseHttpsRedirection();
 
+app.MapGet("/a", (IBackgroundJobQueue c) => { 
+    c.QueueAsync(new  MyFirstJob());
+});
+app.MapGet("/b", (IBackgroundJobQueue c) => {
+    c.QueueAsync(new MyFirstJob());
+});
+
 app.Run();
 
 public class MyFirstJob : Job
