@@ -17,13 +17,14 @@ app.MapGet("/a", (IBackgroundJobQueue c) => {
     c.QueueAsync(new  MyFirstJob());
 });
 app.MapGet("/b", (IBackgroundJobQueue c) => {
-    c.QueueAsync(new MyFirstJob());
+    c.QueueAsync(new MySecondJob());
 });
 
 app.Run();
 
 public class MyFirstJob : Job
 {
+    // 
 
 }
 
@@ -33,19 +34,21 @@ public class MySecondJob : Job
 }
 
 
-public class MyFirstJobConsumer(IBackgroundJobQueue jobQueue) : JobQueueProcessor<MyFirstJob>(jobQueue)
+public class MyFirstJobConsumer(IBackgroundJobQueue jobQueue) 
+    : JobQueueProcessor<MyFirstJob>(jobQueue)
 {
     public override Task JobExecuteAsync(MyFirstJob job, CancellationToken cancellationToken)
     {
+        // update read model!
         return Task.CompletedTask;
     }
 }
 
-public class MySecondJobConsumer(IBackgroundJobQueue jobQueue) : JobQueueProcessor<MyFirstJob>(jobQueue)
+public class MySecondJobConsumer(IBackgroundJobQueue jobQueue) : JobQueueProcessor<MySecondJob>(jobQueue)
 {
-    public override Task JobExecuteAsync(MyFirstJob job, CancellationToken cancellationToken)
+    public override Task JobExecuteAsync(MySecondJob job, CancellationToken cancellationToken)
     {
-
+        // update read model!
         return Task.CompletedTask;
     }
 }
