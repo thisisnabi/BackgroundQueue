@@ -7,7 +7,7 @@ builder.Services.AddBackgroundJobQueue(builder =>
 {
     builder.AddQueueForJob<MyFirstJob>()
            .AddQueueForJob<MySecondJob>(250)
-           .FromAssembly<Program>();
+           .ScanProcessorFromAssembly<Program>();
 });
 
 var app = builder.Build();
